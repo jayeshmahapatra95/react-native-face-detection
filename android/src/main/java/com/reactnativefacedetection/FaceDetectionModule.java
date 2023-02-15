@@ -1,5 +1,5 @@
 package com.reactnativefacedetection;
-
+import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
@@ -31,6 +31,7 @@ import static com.reactnativefacedetection.FaceDetectionCommon.*;
 import static com.reactnativefacedetection.FaceDetectionUtils.*;
 
 
+
 @ReactModule(name = FaceDetectionModule.NAME)
 public class FaceDetectionModule extends ReactContextBaseJavaModule {
     public static final String NAME = "FaceDetection";
@@ -38,7 +39,6 @@ public class FaceDetectionModule extends ReactContextBaseJavaModule {
     public FaceDetectionModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
-
     @Override
     @NonNull
     public String getName() {
@@ -49,6 +49,7 @@ public class FaceDetectionModule extends ReactContextBaseJavaModule {
     public void processImage(String filePath, ReadableMap faceDetectorOptions, Promise promise) {
         FaceDetectorOptions options = getFaceDetectorOptions(Arguments.toBundle(faceDetectorOptions));
 
+        Log.d("ReactNative", "Process image started");
         InputImage image = null;
         try {
             image = InputImage.fromFilePath(
@@ -97,10 +98,15 @@ public class FaceDetectionModule extends ReactContextBaseJavaModule {
                         List<Map<String, Object>> faceContoursFormatted;
 
                         int classificationMode = (int) faceDetectorOptions.getDouble(KEY_CLASSIFICATION_MODE);
+                        //Add contour mode variable and check that (wasn't done in the original file version)
+                        int contourMode = (int) faceDetectorOptions.getDouble(KEY_CONTOUR_MODE);
 
-                        if (classificationMode == FaceDetectorOptions.CONTOUR_MODE_NONE) {
+                        if (contourMode == FaceDetectorOptions.CONTOUR_MODE_NONE) {
                             faceContoursFormatted = new ArrayList<>(0);
+                            Log.d("ReactNative", "Countour Mode None");
+
                         } else {
+                            Log.d("ReactNative", "Countour Mode ALL");
                             faceContoursFormatted = new ArrayList<>(14);
                             faceContoursFormatted.add(getContourMap(face.getContour(FaceContour.FACE)));
                             faceContoursFormatted.add(getContourMap(face.getContour(FaceContour.LEFT_EYEBROW_TOP)));
